@@ -5,13 +5,73 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\core">
+      <UniqueIdentifier>{76c93751-30a1-45dc-87d6-be1ba16497a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3rd_party">
+      <UniqueIdentifier>{7f3e119a-f531-4a80-ad08-e7d861b2e4d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3rd_party\imgui">
+      <UniqueIdentifier>{475172b2-8e92-451d-b39c-cdff2d68f214}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="core\main.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\imgui\imgui.cpp">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\imgui\imgui_demo.cpp">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\imgui\imgui_draw.cpp">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\imgui\imgui_impl_dx9.cpp">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\imgui\imgui_impl_win32.cpp">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\imgui\imgui_widgets.cpp">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="core\precompiled.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="3rd_party\imgui\imconfig.h">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imgui\imgui.h">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imgui\imgui_impl_dx9.h">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imgui\imgui_impl_win32.h">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imgui\imgui_internal.h">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imgui\imstb_rectpack.h">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imgui\imstb_textedit.h">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imgui\imstb_truetype.h">
+      <Filter>Source Files\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="core\precompiled.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

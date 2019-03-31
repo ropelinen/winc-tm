@@ -1,1 +1,4 @@
 *.vcxproj.user
+/Debug/
+*.VC.db
+*.ini
