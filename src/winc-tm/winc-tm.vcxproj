@@ -175,6 +175,10 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">core/precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">core/precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="ui\create_pools_menu.cpp" />
+    <ClCompile Include="ui\create_tournament_menu.cpp" />
+    <ClCompile Include="ui\main_menu.cpp" />
+    <ClCompile Include="ui\menu_handler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd_party\imgui\imconfig.h" />
@@ -187,6 +191,14 @@
     <ClInclude Include="3rd_party\imgui\imstb_truetype.h" />
     <ClInclude Include="core\precompiled.h" />
     <ClInclude Include="core\warning_disables.h" />
+    <ClInclude Include="data\create_tournament_data.h" />
+    <ClInclude Include="data\fencer.h" />
+    <ClInclude Include="data\menu_state.h" />
+    <ClInclude Include="data\state.h" />
+    <ClInclude Include="ui\create_pools_menu.h" />
+    <ClInclude Include="ui\create_tournament_menu.h" />
+    <ClInclude Include="ui\main_menu.h" />
+    <ClInclude Include="ui\menu_handler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

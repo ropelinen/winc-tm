@@ -50,6 +50,18 @@
     <ClCompile Include="core\precompiled.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
+    <ClCompile Include="ui\menu_handler.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\main_menu.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\create_tournament_menu.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\create_pools_menu.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd_party\imgui\imconfig.h">
@@ -81,6 +93,30 @@
     </ClInclude>
     <ClInclude Include="core\warning_disables.h">
       <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\menu_handler.h">
+      <Filter>Source Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\main_menu.h">
+      <Filter>Source Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="data\state.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="data\menu_state.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\create_tournament_menu.h">
+      <Filter>Source Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="data\create_tournament_data.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="data\fencer.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\create_pools_menu.h">
+      <Filter>Source Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
