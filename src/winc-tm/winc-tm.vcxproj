@@ -186,6 +186,7 @@
     <ClInclude Include="3rd_party\imgui\imstb_textedit.h" />
     <ClInclude Include="3rd_party\imgui\imstb_truetype.h" />
     <ClInclude Include="core\precompiled.h" />
+    <ClInclude Include="core\warning_disables.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
