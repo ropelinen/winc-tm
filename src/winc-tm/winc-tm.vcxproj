@@ -164,6 +164,7 @@
     <ClCompile Include="3rd_party\imgui\imgui_impl_dx9.cpp" />
     <ClCompile Include="3rd_party\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="3rd_party\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="3rd_party\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="core\main.cpp" />
     <ClCompile Include="core\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -189,6 +190,7 @@
     <ClInclude Include="3rd_party\imgui\imstb_rectpack.h" />
     <ClInclude Include="3rd_party\imgui\imstb_textedit.h" />
     <ClInclude Include="3rd_party\imgui\imstb_truetype.h" />
+    <ClInclude Include="3rd_party\tinyxml2\tinyxml2.h" />
     <ClInclude Include="core\precompiled.h" />
     <ClInclude Include="core\warning_disables.h" />
     <ClInclude Include="data\bout.h" />

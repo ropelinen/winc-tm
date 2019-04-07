@@ -24,6 +24,9 @@
     <Filter Include="Source Files\data">
       <UniqueIdentifier>{fd3a0c28-f846-4ee9-b47f-4eb2962f20bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\3rd_party\tinyxml2">
+      <UniqueIdentifier>{65d19546-cea7-471e-994e-c8cdb9446957}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\main.cpp">
@@ -61,6 +64,9 @@
     </ClCompile>
     <ClCompile Include="ui\create_pools_menu.cpp">
       <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\tinyxml2\tinyxml2.cpp">
+      <Filter>Source Files\3rd_party\tinyxml2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +132,9 @@
     </ClInclude>
     <ClInclude Include="data\bout.h">
       <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\tinyxml2\tinyxml2.h">
+      <Filter>Source Files\3rd_party\tinyxml2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
