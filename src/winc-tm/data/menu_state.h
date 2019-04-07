@@ -10,6 +10,7 @@ namespace winc
 		load_tournament,
 		create_tournament,
 		create_pools,
+		run_tournament,
 	};
 
 }

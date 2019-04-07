@@ -31,6 +31,10 @@ namespace winc
 		case create_pools:
 			handle_create_pools_menu(state_data);
 			break;
+
+		case run_tournament:
+			/* TODO: handle the run tournament menu here */
+			break;
 		
 		}
 	}

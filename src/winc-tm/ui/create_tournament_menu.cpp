@@ -3,6 +3,7 @@
 #include "create_tournament_menu.h"
 
 #include "3rd_party/imgui/imgui.h"
+#include "data/create_tournament_data.h"
 #include "data/state.h"
 
 namespace winc
@@ -74,12 +75,14 @@ namespace
 
 	void initialize_pools(state &state_data)
 	{
+		create_tournament_data &tournament_data = *state_data.new_tournament_data;
+
 		/* Sort fencers by ranking */
 		std::list<fencer> sorted_fencers;
-		std::list<fencer>::iterator it = state_data.new_tournament_data->fencers.begin();
+		std::list<fencer>::iterator it = tournament_data.fencers.begin();
 		sorted_fencers.push_front(*it);
 		++it;
-		for (; it != state_data.new_tournament_data->fencers.end(); ++it)
+		for (; it != tournament_data.fencers.end(); ++it)
 		{
 			if (it->hema_rating == 0)
 			{
@@ -110,26 +113,30 @@ namespace
 		for (it = sorted_fencers.begin(); it != sorted_fencers.end(); ++it, ++id)
 			it->id = id;
 
-		state_data.new_tournament_data->fencers.swap(sorted_fencers);
+		tournament_data.fencers.swap(sorted_fencers);
 
 		/* Calculate pool count */
-		size_t pool_count = state_data.new_tournament_data->fencers.size() / state_data.new_tournament_data->max_fencers_in_pool;
-		if (state_data.new_tournament_data->fencers.size() / state_data.new_tournament_data->max_fencers_in_pool != 0)
+		size_t pool_count = tournament_data.fencers.size() / tournament_data.max_fencers_in_pool;
+		if (tournament_data.fencers.size() / tournament_data.max_fencers_in_pool != 0)
 			++pool_count;
 
-		state_data.new_tournament_data->pools.resize(pool_count);
+		tournament_data.pools.clear();
+		tournament_data.pools.resize(pool_count);
 
 		/* Split people to pools in order (first goes to pool 1, second goes to pool 2, ..., pool count + 1 goes to pool 1, etc */
 		uint8_t i = 0;
-		for (it = state_data.new_tournament_data->fencers.begin(); it != state_data.new_tournament_data->fencers.end(); ++it, ++i)
-			state_data.new_tournament_data->pools[i % pool_count].push_back(it->id);
+		for (it = tournament_data.fencers.begin(); it != tournament_data.fencers.end(); ++it, ++i)
+			tournament_data.pools[i % pool_count].push_back(it->id);
 	}
 
 	void handle_return_to_main_menu_pressed(state &state_data)
 	{
 		state_data.menu_state = main_menu;
 		if (state_data.new_tournament_data)
+		{
 			delete state_data.new_tournament_data;
+			state_data.new_tournament_data = nullptr;
+		}
 	}
 
 	void handle_next_pressed(state &state_data)

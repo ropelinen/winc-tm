@@ -191,10 +191,13 @@
     <ClInclude Include="3rd_party\imgui\imstb_truetype.h" />
     <ClInclude Include="core\precompiled.h" />
     <ClInclude Include="core\warning_disables.h" />
+    <ClInclude Include="data\bout.h" />
     <ClInclude Include="data\create_tournament_data.h" />
     <ClInclude Include="data\fencer.h" />
     <ClInclude Include="data\menu_state.h" />
+    <ClInclude Include="data\pool.h" />
     <ClInclude Include="data\state.h" />
+    <ClInclude Include="data\tournament_data.h" />
     <ClInclude Include="ui\create_pools_menu.h" />
     <ClInclude Include="ui\create_tournament_menu.h" />
     <ClInclude Include="ui\main_menu.h" />

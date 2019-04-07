@@ -3,6 +3,7 @@
 #include "main_menu.h"
 
 #include "3rd_party/imgui/imgui.h"
+#include "data/create_tournament_data.h"
 #include "data/state.h"
 
 namespace winc

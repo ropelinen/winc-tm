@@ -118,5 +118,14 @@
     <ClInclude Include="ui\create_pools_menu.h">
       <Filter>Source Files\ui</Filter>
     </ClInclude>
+    <ClInclude Include="data\tournament_data.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="data\pool.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="data\bout.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
