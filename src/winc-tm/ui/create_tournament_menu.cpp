@@ -117,7 +117,7 @@ namespace
 
 		/* Calculate pool count */
 		size_t pool_count = tournament_data.fencers.size() / tournament_data.max_fencers_in_pool;
-		if (tournament_data.fencers.size() / tournament_data.max_fencers_in_pool != 0)
+		if (tournament_data.fencers.size() % tournament_data.max_fencers_in_pool != 0)
 			++pool_count;
 
 		tournament_data.pools.clear();

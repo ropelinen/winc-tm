@@ -68,6 +68,9 @@
     <ClCompile Include="3rd_party\tinyxml2\tinyxml2.cpp">
       <Filter>Source Files\3rd_party\tinyxml2</Filter>
     </ClCompile>
+    <ClCompile Include="core\file_io.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd_party\imgui\imconfig.h">
@@ -135,6 +138,9 @@
     </ClInclude>
     <ClInclude Include="3rd_party\tinyxml2\tinyxml2.h">
       <Filter>Source Files\3rd_party\tinyxml2</Filter>
+    </ClInclude>
+    <ClInclude Include="core\file_io.h">
+      <Filter>Source Files\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

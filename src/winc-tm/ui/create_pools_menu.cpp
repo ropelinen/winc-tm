@@ -3,6 +3,7 @@
 #include "create_pools_menu.h"
 
 #include "3rd_party/imgui/imgui.h"
+#include "core/file_io.h"
 #include "data/create_tournament_data.h"
 #include "data/state.h"
 #include "data/tournament_data.h"
@@ -69,7 +70,7 @@ namespace
 		initialize_tournament_data(state_data);
 		delete state_data.new_tournament_data;
 		state_data.new_tournament_data = nullptr;
-		/* TODO: We are going to need a save tournament data helper to a seperate file */
+		write_tournament_data(*state_data.tournament_data);
 		state_data.menu_state = run_tournament;
 	}
 

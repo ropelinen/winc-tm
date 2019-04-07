@@ -3,8 +3,10 @@
 #include "main_menu.h"
 
 #include "3rd_party/imgui/imgui.h"
+#include "core/file_io.h"
 #include "data/create_tournament_data.h"
 #include "data/state.h"
+#include "data/tournament_data.h"
 
 namespace winc
 {
@@ -27,7 +29,14 @@ namespace winc
 
 	void handle_load_tournament_pressed(state& state_data)
 	{
-		state_data.menu_state = load_tournament;
+		state_data.tournament_data = new tournament_data;
+		if (read_tournament_data(*state_data.tournament_data))
+			state_data.menu_state = run_tournament;
+		else
+		{
+			delete state_data.tournament_data;
+			state_data.tournament_data = nullptr;
+		}
 	}
 
 	void handle_quit_pressed(state& state_data)

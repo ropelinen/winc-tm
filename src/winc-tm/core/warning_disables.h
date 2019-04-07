@@ -3,6 +3,8 @@
 #ifdef _MSC_VER
 
 #pragma warning(disable : 4514) /* unreferenced inline function has been removed */
+#pragma warning(disable : 4625) /* copy constructor was implicitly defined as deleted */
+#pragma warning(disable : 4571) /* Informational: catch(...) semantics changed since Visual C++ 7.1; structured exceptions (SEH) are no longer caught */
 #pragma warning(disable : 4668) /* 'xxx' is not defined as a preprocessor macro, replacing with '0' for '#if/#elif' */
 #pragma warning(disable : 4710) /* function not inlined */
 #pragma warning(disable : 4711) /* function 'xxx' selected for automatic inline expansion */
