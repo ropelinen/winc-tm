@@ -71,6 +71,9 @@
     <ClCompile Include="core\file_io.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
+    <ClCompile Include="ui\run_tournament_menu.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd_party\imgui\imconfig.h">
@@ -141,6 +144,9 @@
     </ClInclude>
     <ClInclude Include="core\file_io.h">
       <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\run_tournament_menu.h">
+      <Filter>Source Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

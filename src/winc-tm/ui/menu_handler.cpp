@@ -6,6 +6,7 @@
 #include "ui/create_pools_menu.h"
 #include "ui/create_tournament_menu.h"
 #include "ui/main_menu.h"
+#include "ui/run_tournament_menu.h"
 
 namespace winc
 {
@@ -33,7 +34,7 @@ namespace winc
 			break;
 
 		case run_tournament:
-			/* TODO: handle the run tournament menu here */
+			handle_run_tournament_menu(state_data);
 			break;
 		
 		}

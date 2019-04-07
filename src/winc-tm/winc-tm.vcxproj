@@ -181,6 +181,7 @@
     <ClCompile Include="ui\create_tournament_menu.cpp" />
     <ClCompile Include="ui\main_menu.cpp" />
     <ClCompile Include="ui\menu_handler.cpp" />
+    <ClCompile Include="ui\run_tournament_menu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd_party\imgui\imconfig.h" />
@@ -206,6 +207,7 @@
     <ClInclude Include="ui\create_tournament_menu.h" />
     <ClInclude Include="ui\main_menu.h" />
     <ClInclude Include="ui\menu_handler.h" />
+    <ClInclude Include="ui\run_tournament_menu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
