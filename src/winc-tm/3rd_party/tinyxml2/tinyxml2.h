@@ -24,6 +24,10 @@ distribution.
 #ifndef TINYXML2_INCLUDED
 #define TINYXML2_INCLUDED
 
+/* The pragma warning are added by the creator of winc-tm */
+#pragma warning(push)
+#pragma warning(disable : 4365)
+
 #if defined(ANDROID_NDK) || defined(__BORLANDC__) || defined(__QNXNTO__)
 #   include <ctype.h>
 #   include <limits.h>
@@ -2305,5 +2309,8 @@ private:
 #if defined(_MSC_VER)
 #   pragma warning(pop)
 #endif
+
+/* This pragma warning is added by the creator of winc-tm */
+#pragma warning(pop)
 
 #endif // TINYXML2_INCLUDED
