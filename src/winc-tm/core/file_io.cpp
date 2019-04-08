@@ -33,6 +33,12 @@ namespace winc
 	const char bout_id_element_name[] = "Id";
 	const char blue_fencer_element_name[] = "BlueFencer";
 	const char red_fencer_element_name[] = "RedFencer";
+	const char exchange_element_name[] = "Exchange";
+	const char blue_hit_element_name[] = "BlueHit";
+	const char red_hit_element_name[] = "RedHit";
+	const char double_element_name[] = "Double";
+	const char warning_blue_element_name[] = "WarningBlue";
+	const char warning_red_element_name[] = "WarningRed";
 
 	bool does_file_exist(LPCSTR file_name)
 	{
@@ -162,22 +168,51 @@ namespace winc
 				/* Bouts */
 				for (size_t bout_index = 0; bout_index < pl.bouts.size(); ++bout_index)
 				{
+					bout &bt = pl.bouts[bout_index];
 					tinyxml2::XMLElement *bout_element = pools_doc.NewElement(bout_element_name);
 					pool_element->InsertEndChild(bout_element);
 
 					tinyxml2::XMLElement *bout_id_element = pools_doc.NewElement(bout_id_element_name);
-					bout_id_element->SetAttribute(attribute_value_name, pl.bouts[bout_index].id);
+					bout_id_element->SetAttribute(attribute_value_name, bt.id);
 					bout_element->InsertEndChild(bout_id_element);
 
 					tinyxml2::XMLElement *blue_fencer_element = pools_doc.NewElement(blue_fencer_element_name);
-					blue_fencer_element->SetAttribute(attribute_value_name, pl.bouts[bout_index].blue_fencer);
+					blue_fencer_element->SetAttribute(attribute_value_name, bt.blue_fencer);
 					bout_element->InsertEndChild(blue_fencer_element);
 
 					tinyxml2::XMLElement *red_fencer_element = pools_doc.NewElement(red_fencer_element_name);
-					red_fencer_element->SetAttribute(attribute_value_name, pl.bouts[bout_index].red_fencer);
+					red_fencer_element->SetAttribute(attribute_value_name, bt.red_fencer);
 					bout_element->InsertEndChild(red_fencer_element);
 
-					//std::vector<exchange> exchanges;
+					/* Exchanges */
+					for (size_t exchange_index = 0; exchange_index < bt.exchanges.size(); ++exchange_index)
+					{
+						exchange &exc = bt.exchanges[exchange_index];
+						tinyxml2::XMLElement *exchange_element = pools_doc.NewElement(exchange_element_name);
+						bout_element->InsertEndChild(exchange_element);
+
+						tinyxml2::XMLElement *exchange_blue_hit_element = pools_doc.NewElement(blue_hit_element_name);
+						exchange_blue_hit_element->SetAttribute(attribute_value_name, exc.hit_blue);
+						exchange_element->InsertEndChild(exchange_blue_hit_element);
+
+						tinyxml2::XMLElement *exchange_red_hit_element = pools_doc.NewElement(red_hit_element_name);
+						exchange_red_hit_element->SetAttribute(attribute_value_name, exc.hit_red);
+						exchange_element->InsertEndChild(exchange_red_hit_element);
+
+						tinyxml2::XMLElement *exchange_double_element = pools_doc.NewElement(double_element_name);
+						exchange_double_element->SetAttribute(attribute_value_name, exc.dbl);
+						exchange_element->InsertEndChild(exchange_double_element);
+
+						tinyxml2::XMLElement *exchange_warning_blue_element = pools_doc.NewElement(warning_blue_element_name);
+						exchange_warning_blue_element->SetAttribute(attribute_value_name, exc.warning_blue);
+						exchange_warning_blue_element->InsertEndChild(pools_doc.NewText(exc.warning_blue_reason));
+						exchange_element->InsertEndChild(exchange_warning_blue_element);
+
+						tinyxml2::XMLElement *exchange_warning_red_element = pools_doc.NewElement(warning_red_element_name);
+						exchange_warning_red_element->SetAttribute(attribute_value_name, exc.warning_red);
+						exchange_warning_red_element->InsertEndChild(pools_doc.NewText(exc.warning_red_reason));
+						exchange_element->InsertEndChild(exchange_warning_red_element);
+					}
 				}
 			}
 
@@ -327,7 +362,64 @@ namespace winc
 					}
 					bt.red_fencer = (uint16_t)red_fencer_element->IntAttribute(attribute_value_name);
 					
-					//std::vector<exchange> exchanges;
+					/* Exchanges */
+					tinyxml2::XMLElement *exchange_element = bout_element->FirstChildElement(exchange_element_name);
+					while (exchange_element)
+					{
+						exchange exc;
+						tinyxml2::XMLElement *exchange_blue_hit_element = exchange_element->FirstChildElement(blue_hit_element_name);
+						if (!exchange_blue_hit_element)
+						{
+							exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
+							continue;
+						}
+						exc.hit_blue = (hit_quality)exchange_blue_hit_element->IntAttribute(attribute_value_name);
+
+						tinyxml2::XMLElement *exchange_red_hit_element = exchange_element->FirstChildElement(red_hit_element_name);
+						if (!exchange_red_hit_element)
+						{
+							exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
+							continue;
+						}
+						exc.hit_red = (hit_quality)exchange_red_hit_element->IntAttribute(attribute_value_name);
+	
+						tinyxml2::XMLElement *exchange_double_element = exchange_element->FirstChildElement(double_element_name);
+						if (!exchange_double_element)
+						{
+							exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
+							continue;
+						}
+						exc.dbl = (double_hit)exchange_double_element->IntAttribute(attribute_value_name);
+
+						tinyxml2::XMLElement *exchange_warning_blue_element = exchange_element->FirstChildElement(warning_blue_element_name);
+						if (!exchange_warning_blue_element)
+						{
+							exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
+							continue;
+						}
+						exc.warning_blue = exchange_warning_blue_element->BoolAttribute(attribute_value_name);
+						if (exchange_warning_blue_element->GetText())
+							memcpy(exc.warning_blue_reason, exchange_warning_blue_element->GetText(), strlen(exchange_warning_blue_element->GetText()) + 1);
+						else
+							exc.warning_blue_reason[0] = '\0';
+
+						tinyxml2::XMLElement *exchange_warning_red_element = exchange_element->FirstChildElement(warning_red_element_name);
+						if (!exchange_warning_red_element)
+						{
+							exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
+							continue;
+						}
+						exc.warning_red = exchange_warning_red_element->BoolAttribute(attribute_value_name);
+						if (exchange_warning_red_element->GetText())
+							memcpy(exc.warning_red_reason, exchange_warning_red_element->GetText(), strlen(exchange_warning_red_element->GetText()) + 1);
+						else
+							exc.warning_red_reason[0] = '\0';
+
+						bt.exchanges.push_back(exc);
+						exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
+					}
+
+					
 
 					pl.bouts.push_back(bt);
 					bout_element = bout_element->NextSiblingElement(bout_element_name);

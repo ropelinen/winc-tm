@@ -3,6 +3,7 @@
 #include "run_tournament_menu.h"
 
 #include "3rd_party/imgui/imgui.h"
+#include "core/file_io.h"
 #include "data/state.h"
 #include "data/tournament_data.h"
 
@@ -162,6 +163,7 @@ namespace winc
 
 			if (ImGui::Button("Back"))
 			{
+				write_tournament_data(tournament);
 				state_data.menu_state = run_tournament;
 			}
 
