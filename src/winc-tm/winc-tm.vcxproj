@@ -181,6 +181,7 @@
     <ClCompile Include="ui\create_tournament_menu.cpp" />
     <ClCompile Include="ui\main_menu.cpp" />
     <ClCompile Include="ui\menu_handler.cpp" />
+    <ClCompile Include="ui\modify_bout_menu.cpp" />
     <ClCompile Include="ui\run_tournament_menu.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -194,10 +195,12 @@
     <ClInclude Include="3rd_party\imgui\imstb_truetype.h" />
     <ClInclude Include="3rd_party\tinyxml2\tinyxml2.h" />
     <ClInclude Include="core\file_io.h" />
+    <ClInclude Include="core\include_std_containers.h" />
     <ClInclude Include="core\precompiled.h" />
     <ClInclude Include="core\warning_disables.h" />
     <ClInclude Include="data\bout.h" />
     <ClInclude Include="data\create_tournament_data.h" />
+    <ClInclude Include="data\exchange.h" />
     <ClInclude Include="data\fencer.h" />
     <ClInclude Include="data\menu_state.h" />
     <ClInclude Include="data\pool.h" />
@@ -207,6 +210,7 @@
     <ClInclude Include="ui\create_tournament_menu.h" />
     <ClInclude Include="ui\main_menu.h" />
     <ClInclude Include="ui\menu_handler.h" />
+    <ClInclude Include="ui\modify_bout_menu.h" />
     <ClInclude Include="ui\run_tournament_menu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

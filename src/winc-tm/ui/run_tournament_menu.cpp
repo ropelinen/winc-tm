@@ -3,6 +3,7 @@
 #include "run_tournament_menu.h"
 
 #include "3rd_party/imgui/imgui.h"
+#include "core/file_io.h"
 #include "data/state.h"
 #include "data/tournament_data.h"
 
@@ -95,6 +96,8 @@ namespace winc
 
 			delete[] fencers;
 		}
+
+		write_tournament_data(data);
 	}
 
 	void handle_main_window_setup_state(tournament_data &data)
@@ -133,8 +136,9 @@ namespace winc
 			handle_create_bouts_for_pools(data);
 	}
 
-	void handle_main_window_pools_state(tournament_data &data)
+	void handle_main_window_pools_state(state &state_data)
 	{
+		tournament_data &data = *state_data.tournament_data;
 		std::vector<fencer> &fencers = data.fencers;
 		for (size_t pool_index = 0; pool_index < data.pools.size(); ++pool_index)
 		{
@@ -168,8 +172,24 @@ namespace winc
 						continue;
 
 					if (ImGui::TreeNode((void *)(intptr_t)bt.id, "%s (%s) - %s (%s)", blue->name, blue->club, red->name, red->club))
-					{
-						/* We can add more detiailed info here */					
+					{	
+						if (bt.exchanges.empty())
+						{
+							if (ImGui::Button("Input Bout"))
+							{
+								state_data.bout_to_modify = bt.id;
+								state_data.menu_state = modify_bout;
+							}
+						}
+						else
+						{
+							/* TODO: Show some kind of an summary here */
+							if (ImGui::Button("Modify Bout"))
+							{
+								state_data.bout_to_modify = bt.id;
+								state_data.menu_state = modify_bout;
+							}
+						}
 						ImGui::TreePop();
 					}
 				}
@@ -200,7 +220,7 @@ namespace winc
 			break;
 
 		case pools:
-			handle_main_window_pools_state(tournament);
+			handle_main_window_pools_state(state_data);
 			break;
 
 		case elims:

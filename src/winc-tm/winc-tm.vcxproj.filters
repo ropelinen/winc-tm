@@ -74,6 +74,9 @@
     <ClCompile Include="ui\run_tournament_menu.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="ui\modify_bout_menu.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd_party\imgui\imconfig.h">
@@ -146,6 +149,15 @@
       <Filter>Source Files\core</Filter>
     </ClInclude>
     <ClInclude Include="ui\run_tournament_menu.h">
+      <Filter>Source Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include_std_containers.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="data\exchange.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\modify_bout_menu.h">
       <Filter>Source Files\ui</Filter>
     </ClInclude>
   </ItemGroup>

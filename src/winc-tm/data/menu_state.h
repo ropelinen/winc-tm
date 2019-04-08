@@ -11,6 +11,7 @@ namespace winc
 		create_tournament,
 		create_pools,
 		run_tournament,
+		modify_bout,
 	};
 
 }

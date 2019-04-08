@@ -15,5 +15,7 @@ namespace winc
 		create_tournament_data *new_tournament_data = nullptr;
 		tournament_data *tournament_data = nullptr;
 		bool exit_requested = false;
+		static const uint16_t invalid_bout_id = 0xFFFF;
+		uint16_t bout_to_modify = invalid_bout_id;
 	};
 }

@@ -1,14 +1,8 @@
 #pragma once
 
+#include "core/include_std_containers.h"
 #include "data/fencer.h"
 #include "data/pool.h"
-
-#pragma warning(push)
-#pragma warning(disable : 4365)
-#pragma warning(disable : 4571)
-#pragma warning(disable : 4626)
-#include <vector>
-#pragma warning(pop) 
 
 namespace winc
 {

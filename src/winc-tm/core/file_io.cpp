@@ -29,6 +29,10 @@ namespace winc
 	const char pools_file[] = "./files/pools.xml";
 	const char pools_element_name[] = "Pools";
 	const char pool_element_name[] = "Pool";
+	const char bout_element_name[] = "Bout";
+	const char bout_id_element_name[] = "Id";
+	const char blue_fencer_element_name[] = "BlueFencer";
+	const char red_fencer_element_name[] = "RedFencer";
 
 	bool does_file_exist(LPCSTR file_name)
 	{
@@ -147,11 +151,33 @@ namespace winc
 				pool_element->SetAttribute(attribute_value_name, (int)i);
 				main_element->InsertEndChild(pool_element);
 
+				/* Fencers */
 				for (size_t fencer_index = 0; fencer_index < pl.fencers.size(); ++fencer_index)
 				{
 					tinyxml2::XMLElement *fencer_element = pools_doc.NewElement(fencer_element_name);
 					fencer_element->SetAttribute(attribute_value_name, pl.fencers[fencer_index]);
 					pool_element->InsertEndChild(fencer_element);
+				}
+
+				/* Bouts */
+				for (size_t bout_index = 0; bout_index < pl.bouts.size(); ++bout_index)
+				{
+					tinyxml2::XMLElement *bout_element = pools_doc.NewElement(bout_element_name);
+					pool_element->InsertEndChild(bout_element);
+
+					tinyxml2::XMLElement *bout_id_element = pools_doc.NewElement(bout_id_element_name);
+					bout_id_element->SetAttribute(attribute_value_name, pl.bouts[bout_index].id);
+					bout_element->InsertEndChild(bout_id_element);
+
+					tinyxml2::XMLElement *blue_fencer_element = pools_doc.NewElement(blue_fencer_element_name);
+					blue_fencer_element->SetAttribute(attribute_value_name, pl.bouts[bout_index].blue_fencer);
+					bout_element->InsertEndChild(blue_fencer_element);
+
+					tinyxml2::XMLElement *red_fencer_element = pools_doc.NewElement(red_fencer_element_name);
+					red_fencer_element->SetAttribute(attribute_value_name, pl.bouts[bout_index].red_fencer);
+					bout_element->InsertEndChild(red_fencer_element);
+
+					//std::vector<exchange> exchanges;
 				}
 			}
 
@@ -258,6 +284,7 @@ namespace winc
 			{
 				pool pl;
 
+				/* Fencers */
 				tinyxml2::XMLElement *fencer_element = pool_element->FirstChildElement(fencer_element_name);
 				if (!fencer_element)
 				{
@@ -269,6 +296,41 @@ namespace winc
 				{
 					pl.fencers.push_back((uint16_t)fencer_element->IntAttribute(attribute_value_name));
 					fencer_element = fencer_element->NextSiblingElement(fencer_element_name);
+				}
+
+				/* Bouts */
+				tinyxml2::XMLElement *bout_element = pool_element->FirstChildElement(bout_element_name);
+				while (bout_element)
+				{		
+					bout bt;
+					tinyxml2::XMLElement *bout_id_element = bout_element->FirstChildElement(bout_id_element_name);
+					if (!bout_id_element)
+					{
+						bout_element = bout_element->NextSiblingElement(bout_element_name);
+						continue;
+					}
+					bt.id = (uint16_t)bout_id_element->IntAttribute(attribute_value_name);
+					
+					tinyxml2::XMLElement *blue_fencer_element = bout_element->FirstChildElement(blue_fencer_element_name);
+					if (!blue_fencer_element)
+					{
+						bout_element = bout_element->NextSiblingElement(bout_element_name);
+						continue;
+					}
+					bt.blue_fencer = (uint16_t)blue_fencer_element->IntAttribute(attribute_value_name);
+
+					tinyxml2::XMLElement *red_fencer_element = bout_element->FirstChildElement(red_fencer_element_name);
+					if (!red_fencer_element)
+					{
+						bout_element = bout_element->NextSiblingElement(bout_element_name);
+						continue;
+					}
+					bt.red_fencer = (uint16_t)red_fencer_element->IntAttribute(attribute_value_name);
+					
+					//std::vector<exchange> exchanges;
+
+					pl.bouts.push_back(bt);
+					bout_element = bout_element->NextSiblingElement(bout_element_name);
 				}
 
 				data.pools.push_back(pl);
