@@ -183,7 +183,29 @@ namespace winc
 						}
 						else
 						{
-							/* TODO: Show some kind of an summary here */
+							uint16_t blue_q1, blue_q2, blue_q3;
+							uint16_t red_q1, red_q2, red_q3;
+							get_blue_fencer_score(bt, blue_q1, blue_q2, blue_q3);
+							get_red_fencer_score(bt, red_q1, red_q2, red_q3);
+
+							if (get_suicidal_double_count(bt) >= 3)
+								ImGui::Text("Double loss, three suicidal doubles");
+							
+							uint16_t warning_count = get_blue_warning_count(bt);
+							if (warning_count >= 4)
+								ImGui::Text("Blue: Warning loss");
+							else if (warning_count >= 2)
+								ImGui::Text("Blue: Penaly to highest quality");
+
+							warning_count = get_red_warning_count(bt);
+							if (warning_count >= 4)
+								ImGui::Text("Red: Warning loss");
+							else if (warning_count >= 2)
+								ImGui::Text("Red: Penaly to highest quality");
+
+							ImGui::Text("This score takes doubles in count, but doesn't take penalties to count");
+							ImGui::Text("Blue: Q1(%u) Q2(%u) Q3(%u) - Red: Q1(%u) Q2(%u) Q3(%u)", blue_q1, blue_q2, blue_q3, red_q1, red_q2, red_q3);
+
 							if (ImGui::Button("Modify Bout"))
 							{
 								state_data.bout_to_modify = bt.id;
