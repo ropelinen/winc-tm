@@ -2,6 +2,7 @@
 
 #ifdef _MSC_VER
 
+#pragma warning(disable : 4505) /* unreferenced local function has been removed */
 #pragma warning(disable : 4514) /* unreferenced inline function has been removed */
 #pragma warning(disable : 4625) /* copy constructor was implicitly defined as deleted */
 #pragma warning(disable : 4571) /* Informational: catch(...) semantics changed since Visual C++ 7.1; structured exceptions (SEH) are no longer caught */
