@@ -39,6 +39,75 @@ namespace winc
 		}
 	}
 
+	void sort_pool_result(std::vector<fencer_results> &results)
+	{
+		if (results.empty())
+			return;
+		
+		std::list<fencer_results> temp_results;
+		temp_results.push_back(results[0]);
+
+		for (size_t result_index = 1; result_index < results.size(); ++result_index)
+		{
+			bool inserted = false;
+			fencer_results &result = results[result_index];
+			for (std::list<fencer_results>::iterator it = temp_results.begin(); it != temp_results.end(); ++it)
+			{
+				/* Matchpoint index */
+				if (get_fencer_matchpoint_index(result) > get_fencer_matchpoint_index(*it))
+				{
+					temp_results.insert(it, result);
+					inserted = true;
+					break;
+				}
+				
+				if (get_fencer_matchpoint_index(result) != get_fencer_matchpoint_index(*it))
+					continue;
+
+				/* Victory index */
+				if (get_fencer_victory_index(result) > get_fencer_victory_index(*it))
+				{
+					temp_results.insert(it, result);
+					inserted = true;
+					break;
+				}
+
+				if (get_fencer_victory_index(result) != get_fencer_victory_index(*it))
+					continue;
+
+				/* Q3 ration */
+				if (get_fencer_q3_ratio(result) > get_fencer_q3_ratio(*it))
+				{
+					temp_results.insert(it, result);
+					inserted = true;
+					break;
+				}
+
+				if (get_fencer_q3_ratio(result) != get_fencer_q3_ratio(*it))
+					continue;
+
+				/* Clean ratio */
+				if (get_fencer_clean_ratio(result) > get_fencer_clean_ratio(*it))
+				{
+					temp_results.insert(it, result);
+					inserted = true;
+					break;
+				}
+			}
+
+			if (!inserted)
+				temp_results.push_back(result);
+		}
+
+		assert(temp_results.size() == results.size());
+
+		results.clear();
+		results.reserve(temp_results.size());
+
+		for (std::list<fencer_results>::iterator it = temp_results.begin(); it != temp_results.end(); ++it)
+			results.push_back(*it);
+	}
+
 	void handle_create_bouts_for_pools(tournament_data &data)
 	{
 		uint16_t bout_id = 0;
@@ -226,6 +295,7 @@ namespace winc
 					{
 						state_data.pool_results.clear();
 						calculate_pool_results(pl, state_data.pool_results);
+						sort_pool_result(state_data.pool_results);
 						state_data.menu_state = pool_results;
 					}
 				}
