@@ -15,6 +15,7 @@ namespace winc
 	const char tournament_element_name[] = "Tournament";
 	const char name_element_name[] = "Name";
 	const char elim_pool_count_element_name[] = "ElimPoolCount";
+	const char max_fencers_in_pool_element_name[] = "MaxFencersInPool";
 	const char fencers_in_finals_element_name[] = "FencersInFinals";
 
 	/* fencers.xml */
@@ -101,6 +102,10 @@ namespace winc
 			tinyxml2::XMLElement *elim_pool_count_element = tournament_doc.NewElement(elim_pool_count_element_name);
 			elim_pool_count_element->SetAttribute(attribute_value_name, data.elimination_pool_count);
 			main_element->InsertEndChild(elim_pool_count_element);
+
+			tinyxml2::XMLElement *max_fencers_in_pool_element = tournament_doc.NewElement(max_fencers_in_pool_element_name);
+			max_fencers_in_pool_element->SetAttribute(attribute_value_name, data.max_fencers_in_pool);
+			main_element->InsertEndChild(max_fencers_in_pool_element);
 
 			tinyxml2::XMLElement *fencers_in_finals_element = tournament_doc.NewElement(fencers_in_finals_element_name);
 			fencers_in_finals_element->SetAttribute(attribute_value_name, data.fencers_in_finals);
@@ -248,6 +253,12 @@ namespace winc
 				return false;
 
 			data.elimination_pool_count = (uint16_t)elim_pool_count_element->IntAttribute(attribute_value_name);
+
+			tinyxml2::XMLElement *max_fencers_in_pool_element = main_element->FirstChildElement(max_fencers_in_pool_element_name);
+			if (!max_fencers_in_pool_element)
+				return false;
+
+			data.max_fencers_in_pool = (uint16_t)max_fencers_in_pool_element->IntAttribute(attribute_value_name);
 
 			tinyxml2::XMLElement *fencers_in_finals_element = main_element->FirstChildElement(fencers_in_finals_element_name);
 			if (!fencers_in_finals_element_name)

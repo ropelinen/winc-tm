@@ -8,6 +8,7 @@
 #include "ui/main_menu.h"
 #include "ui/modify_bout_menu.h"
 #include "ui/pool_results_menu.h"
+#include "ui/pools_done_menu.h"
 #include "ui/run_tournament_menu.h"
 
 namespace winc
@@ -45,6 +46,10 @@ namespace winc
 
 		case pool_results:
 			handle_pool_results_menu(state_data);
+			break;
+
+		case pools_done:
+			handle_pools_done_menu(state_data);
 			break;
 		
 		}

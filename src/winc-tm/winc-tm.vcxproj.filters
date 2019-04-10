@@ -80,6 +80,9 @@
     <ClCompile Include="ui\pool_results_menu.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="ui\pools_done_menu.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd_party\imgui\imconfig.h">
@@ -167,6 +170,9 @@
       <Filter>Source Files\data</Filter>
     </ClInclude>
     <ClInclude Include="ui\pool_results_menu.h">
+      <Filter>Source Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\pools_done_menu.h">
       <Filter>Source Files\ui</Filter>
     </ClInclude>
   </ItemGroup>

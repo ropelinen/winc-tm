@@ -13,6 +13,7 @@ namespace winc
 		run_tournament,
 		modify_bout,
 		pool_results,
+		pools_done,
 	};
 
 }

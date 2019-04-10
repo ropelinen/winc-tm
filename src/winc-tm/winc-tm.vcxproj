@@ -182,6 +182,7 @@
     <ClCompile Include="ui\main_menu.cpp" />
     <ClCompile Include="ui\menu_handler.cpp" />
     <ClCompile Include="ui\modify_bout_menu.cpp" />
+    <ClCompile Include="ui\pools_done_menu.cpp" />
     <ClCompile Include="ui\pool_results_menu.cpp" />
     <ClCompile Include="ui\run_tournament_menu.cpp" />
   </ItemGroup>
@@ -213,6 +214,7 @@
     <ClInclude Include="ui\main_menu.h" />
     <ClInclude Include="ui\menu_handler.h" />
     <ClInclude Include="ui\modify_bout_menu.h" />
+    <ClInclude Include="ui\pools_done_menu.h" />
     <ClInclude Include="ui\pool_results_menu.h" />
     <ClInclude Include="ui\run_tournament_menu.h" />
   </ItemGroup>

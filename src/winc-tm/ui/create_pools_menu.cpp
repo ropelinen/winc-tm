@@ -38,6 +38,7 @@ namespace
 		
 		memcpy(tournament->tournament_name, creation_data->tournament_name, std::min(tournament_data::max_tournament_name_len, create_tournament_data::max_tournament_name_len));
 		tournament->elimination_pool_count = creation_data->elimination_pool_count;
+		tournament->max_fencers_in_pool = creation_data->max_fencers_in_pool;
 		tournament->fencers_in_finals = creation_data->final_pool_fencer_count;
 
 		for (std::list<fencer>::iterator it = creation_data->fencers.begin(); it != creation_data->fencers.end(); ++it)

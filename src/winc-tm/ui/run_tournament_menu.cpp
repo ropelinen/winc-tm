@@ -21,21 +21,25 @@ namespace winc
 
 		tournament_state get_current_state(tournament_data &data)
 		{
-			bool pool_bouts_found = false;
+			for (size_t i = 0; i < data.elimination_pools.size(); ++i)
+			{
+				if (data.elimination_pools[i].bouts.empty())
+					continue;
+
+				return elims;
+				break;
+			}
+
 			for (size_t i = 0; i < data.pools.size(); ++i)
 			{
 				if (data.pools[i].bouts.empty())
 					continue;
 
-				pool_bouts_found = true;
+				return pools;
 				break;
 			}
-
-			if (!pool_bouts_found)
-				return setup;
-
-			/* How do we determine if all bouts have been fought? */
-			return pools;
+			
+			return setup;			
 		}
 	}
 
@@ -300,6 +304,39 @@ namespace winc
 					}
 				}
 			}			
+		}
+
+		/* Check for pools done condition */
+		bool all_pools_done = true;
+		for (size_t pool_index = 0; pool_index < data.pools.size(); ++pool_index)
+		{
+			pool &pl = data.pools[pool_index];
+			for (size_t bout_index = 0; bout_index < pl.bouts.size(); ++bout_index)
+			{
+				if (pl.bouts[bout_index].exchanges.empty())
+				{
+					all_pools_done = false;
+					break;
+				}
+			}
+
+			if (!all_pools_done)
+				break;
+		}
+
+		if (all_pools_done)
+		{
+			if (ImGui::Button("Finish pools"))
+			{
+				state_data.pool_results.clear();
+				for (size_t pool_index = 0; pool_index < data.pools.size(); ++pool_index)
+				{
+					pool &pl = data.pools[pool_index];
+					calculate_pool_results(pl, state_data.pool_results);
+				}
+				sort_pool_result(state_data.pool_results);
+				state_data.menu_state = pools_done;
+			}
 		}
 	}
 

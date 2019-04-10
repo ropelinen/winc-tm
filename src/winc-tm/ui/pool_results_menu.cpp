@@ -27,7 +27,7 @@ namespace winc
 		ImGui::Text("Results");
 		ImGui::Columns(6, "mycolumns");
 		ImGui::Separator();
-		ImGui::Text("Name"); 
+		ImGui::Text("# Name"); 
 		ImGui::NextColumn();
 		ImGui::Text("Club"); 
 		ImGui::NextColumn();
@@ -58,7 +58,7 @@ namespace winc
 			if (!fenc)
 				continue;
 
-			ImGui::Text("%s", fenc->name);
+			ImGui::Text("%u %s", result_index + 1, fenc->name);
 			ImGui::NextColumn();
 			ImGui::Text("%s", fenc->club);
 			ImGui::NextColumn();
@@ -74,6 +74,9 @@ namespace winc
 
 		ImGui::Columns(1);
 		ImGui::Separator();
+
+		if (ImGui::Button("Back"))
+			state_data.menu_state = run_tournament;
 
 		ImGui::End();
 
