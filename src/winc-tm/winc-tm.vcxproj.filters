@@ -77,6 +77,9 @@
     <ClCompile Include="ui\modify_bout_menu.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="ui\pool_results_menu.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd_party\imgui\imconfig.h">
@@ -158,6 +161,12 @@
       <Filter>Source Files\data</Filter>
     </ClInclude>
     <ClInclude Include="ui\modify_bout_menu.h">
+      <Filter>Source Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="data\fencer_results.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\pool_results_menu.h">
       <Filter>Source Files\ui</Filter>
     </ClInclude>
   </ItemGroup>

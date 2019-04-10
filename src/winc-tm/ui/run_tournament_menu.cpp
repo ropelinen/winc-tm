@@ -150,11 +150,15 @@ namespace winc
 			if (ImGui::CollapsingHeader(pool_name))
 			{
 				pool &pl = data.pools[pool_index];
+				bool all_matches_fought = true;
 				for (size_t bout_index = 0; bout_index < pl.bouts.size(); ++bout_index)
 				{
 					bout &bt = pl.bouts[bout_index];
 					fencer *blue = nullptr;
 					fencer *red = nullptr;
+
+					if (bt.exchanges.empty())
+						all_matches_fought = false;
 
 					for (size_t fencer_index = 0; fencer_index < fencers.size(); ++fencer_index)
 					{
@@ -215,7 +219,17 @@ namespace winc
 						ImGui::TreePop();
 					}
 				}
-			}
+
+				if (all_matches_fought)
+				{
+					if (ImGui::Button("Show pool results"))
+					{
+						state_data.pool_results.clear();
+						calculate_pool_results(pl, state_data.pool_results);
+						state_data.menu_state = pool_results;
+					}
+				}
+			}			
 		}
 	}
 

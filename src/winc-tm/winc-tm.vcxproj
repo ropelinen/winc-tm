@@ -182,6 +182,7 @@
     <ClCompile Include="ui\main_menu.cpp" />
     <ClCompile Include="ui\menu_handler.cpp" />
     <ClCompile Include="ui\modify_bout_menu.cpp" />
+    <ClCompile Include="ui\pool_results_menu.cpp" />
     <ClCompile Include="ui\run_tournament_menu.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +203,7 @@
     <ClInclude Include="data\create_tournament_data.h" />
     <ClInclude Include="data\exchange.h" />
     <ClInclude Include="data\fencer.h" />
+    <ClInclude Include="data\fencer_results.h" />
     <ClInclude Include="data\menu_state.h" />
     <ClInclude Include="data\pool.h" />
     <ClInclude Include="data\state.h" />
@@ -211,6 +213,7 @@
     <ClInclude Include="ui\main_menu.h" />
     <ClInclude Include="ui\menu_handler.h" />
     <ClInclude Include="ui\modify_bout_menu.h" />
+    <ClInclude Include="ui\pool_results_menu.h" />
     <ClInclude Include="ui\run_tournament_menu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

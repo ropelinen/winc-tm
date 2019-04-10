@@ -29,7 +29,7 @@ namespace winc
 		char warning_blue_reason[warning_max_len];
 	};
 
-	static uint16_t get_exchange_quality_blue(exchange &exc)
+	static uint16_t get_exchange_quality_blue(const exchange &exc)
 	{
 		uint16_t quality = 0;
 		if (exc.hit_blue == wound)
@@ -43,7 +43,7 @@ namespace winc
 		return quality;
 	}
 
-	static uint16_t get_exchange_quality_red(exchange &exc)
+	static uint16_t get_exchange_quality_red(const exchange &exc)
 	{
 		uint16_t quality = 0;
 		if (exc.hit_red == wound)
