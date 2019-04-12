@@ -54,7 +54,7 @@ namespace winc
 							continue;
 
 						bout bt;
-						bt.id = bout_id;
+						bt.id = 1000u + bout_id;
 						if (fencer_a < fencer_b)
 						{
 							bt.blue_fencer = fencer_a;

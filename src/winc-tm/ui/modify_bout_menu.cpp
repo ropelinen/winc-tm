@@ -18,6 +18,7 @@ namespace winc
 			bout *bt = nullptr;
 
 			tournament_data &tournament = *state_data.tournament_data;
+			/* Pools */
 			for (size_t pool_index = 0; pool_index < tournament.pools.size(); ++pool_index)
 			{
 				for (size_t bout_index = 0; bout_index < tournament.pools[pool_index].bouts.size(); ++bout_index)
@@ -32,6 +33,28 @@ namespace winc
 				if (bt)
 					break;
 			}
+
+			/* Elim pools */
+			if (!bt)
+			{
+				for (size_t pool_index = 0; pool_index < tournament.elimination_pools.size(); ++pool_index)
+				{
+					for (size_t bout_index = 0; bout_index < tournament.elimination_pools[pool_index].bouts.size(); ++bout_index)
+					{
+						if (tournament.elimination_pools[pool_index].bouts[bout_index].id == state_data.bout_to_modify)
+						{
+							bt = &tournament.elimination_pools[pool_index].bouts[bout_index];
+							break;
+						}
+					}
+
+					if (bt)
+						break;
+				}
+			}
+
+			if (!bt)
+				return;
 
 			for (size_t i = 0; i < tournament.fencers.size(); ++i)
 			{
