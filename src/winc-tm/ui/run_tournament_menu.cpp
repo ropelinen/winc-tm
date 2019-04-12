@@ -21,6 +21,9 @@ namespace winc
 
 		tournament_state get_current_state(tournament_data &data)
 		{
+			if (!data.final_pool.empty())
+				return finals;
+
 			if (!data.elimination_pools.empty())
 				return elims;
 			
@@ -219,7 +222,7 @@ namespace winc
 			pools = &data.elimination_pools;
 			break;
 		case finals:
-			/* Dump final pool to a vector for simplicitys sake */
+			pools = &data.final_pool;
 			break;
 		}
 
@@ -353,8 +356,10 @@ namespace winc
 					state_data.menu_state = pools_done;
 					break;
 				case elims:
+					state_data.menu_state = pools_done;
 					break;
 				case finals:
+					state_data.menu_state = pools_done;
 					break;
 				}
 			}
@@ -392,6 +397,7 @@ namespace winc
 			break;
 
 		case finals:
+			handle_main_window_pools_states(state_data, current_state);
 			break;
 		}
 

@@ -11,19 +11,32 @@ namespace winc
 {
 	namespace
 	{
-		void create_elimination_pools(state &state_data)
+		void create_new_pools(state &state_data)
 		{
 			uint16_t advancing_fencer_count = uint16_t(state_data.tournament_data->elimination_pool_count * state_data.tournament_data->max_fencers_in_pool);
-			uint16_t pool_count = state_data.tournament_data->elimination_pool_count;
+			/* Elim pools */
+			if (state_data.tournament_data->elimination_pools.empty())
+			{
+				uint16_t pool_count = state_data.tournament_data->elimination_pool_count;
 
-			state_data.tournament_data->elimination_pools.clear();
-			state_data.tournament_data->elimination_pools.resize(pool_count);
+				state_data.tournament_data->elimination_pools.clear();
+				state_data.tournament_data->elimination_pools.resize(pool_count);
 
-			for (size_t fencer_index = 0; fencer_index < advancing_fencer_count; ++fencer_index)
-				state_data.tournament_data->elimination_pools[fencer_index % pool_count].fencers.push_back(state_data.pool_results[fencer_index].id);
+				for (size_t fencer_index = 0; fencer_index < advancing_fencer_count; ++fencer_index)
+					state_data.tournament_data->elimination_pools[fencer_index % pool_count].fencers.push_back(state_data.pool_results[fencer_index].id);
+			}
+			else
+			{
+				state_data.tournament_data->final_pool.clear();
+				state_data.tournament_data->final_pool.resize(1);
+
+				/* Finals */
+				for (size_t fencer_index = 0; fencer_index < state_data.tournament_data->fencers_in_finals; ++fencer_index)
+					state_data.tournament_data->final_pool[0].fencers.push_back(state_data.pool_results[fencer_index].id);
+			}
 		}
 
-		void handle_create_bouts_for_pools(tournament_data & data)
+		void handle_create_bouts_for_elims(tournament_data &data)
 		{
 			uint16_t bout_id = 0;
 			const uint16_t invalid_fencer_id = 0xFFFF;
@@ -83,11 +96,76 @@ namespace winc
 
 			write_tournament_data(data);
 		}
+
+		void handle_create_bouts_for_finals(tournament_data &data)
+		{
+			uint16_t bout_id = 0;
+			const uint16_t invalid_fencer_id = 0xFFFF;
+			for (size_t pool_index = 0; pool_index < data.final_pool.size(); ++pool_index)
+			{
+				pool &pl = data.final_pool[pool_index];
+				pl.bouts.clear();
+				bool uneven_fencer_count = pl.fencers.size() % 2 != 0;
+				size_t fencer_count = pl.fencers.size();
+				if (uneven_fencer_count)
+					++fencer_count;
+
+				uint16_t *fencers = new uint16_t[fencer_count];
+
+				if (uneven_fencer_count)
+					fencers[fencer_count - 1] = invalid_fencer_id;
+
+				for (size_t fencer_index = 0; fencer_index < pl.fencers.size(); ++fencer_index)
+					fencers[fencer_index] = pl.fencers[fencer_index];
+
+				for (size_t round = 0; round < fencer_count - 1; ++round)
+				{
+					for (size_t bout_index = 0; bout_index < fencer_count / 2; ++bout_index)
+					{
+						uint16_t fencer_a = fencers[bout_index];
+						uint16_t fencer_b = fencers[fencer_count - 1 - bout_index];
+						if (fencer_a == invalid_fencer_id || fencer_b == invalid_fencer_id)
+							continue;
+
+						bout bt;
+						bt.id = 10000u + bout_id;
+						if (fencer_a < fencer_b)
+						{
+							bt.blue_fencer = fencer_a;
+							bt.red_fencer = fencer_b;
+						}
+						else
+						{
+							bt.blue_fencer = fencer_b;
+							bt.red_fencer = fencer_a;
+						}
+
+						pl.bouts.push_back(bt);
+						++bout_id;
+					}
+
+					/* Advance the fencers */
+					uint16_t last_fencer_id = fencers[fencer_count - 1];
+					for (size_t move_index = fencer_count - 1; move_index > 1; --move_index)
+						fencers[move_index] = fencers[move_index - 1];
+
+					fencers[1] = last_fencer_id;
+				}
+
+				delete[] fencers;
+			}
+
+			write_tournament_data(data);
+		}
 	}
 
 	void handle_total_pool_results(state &state_data)
 	{
-		uint16_t advancing_fencer_count = uint16_t(state_data.tournament_data->elimination_pool_count * state_data.tournament_data->max_fencers_in_pool);
+		uint16_t advancing_fencer_count = 0;
+		if (state_data.tournament_data->elimination_pools.empty())
+			advancing_fencer_count = uint16_t(state_data.tournament_data->elimination_pool_count * state_data.tournament_data->max_fencers_in_pool);
+		else
+			advancing_fencer_count = state_data.tournament_data->fencers_in_finals;;
 
 		ImGui::Text("Results");
 		ImGui::Columns(6, "mycolumns");
@@ -151,10 +229,17 @@ namespace winc
 
 		ImGui::SameLine();
 
-		if (ImGui::Button("Create elimination pools"))
+		if (!state_data.tournament_data->final_pool.empty())
+			return;
+			
+		if (ImGui::Button("Create new pools"))
 		{
-			create_elimination_pools(state_data);
-			handle_create_bouts_for_pools(*state_data.tournament_data);
+			create_new_pools(state_data);
+			if (state_data.tournament_data->final_pool.empty())
+				handle_create_bouts_for_elims(*state_data.tournament_data);
+			else
+				handle_create_bouts_for_finals(*state_data.tournament_data);
+
 			write_tournament_data(*state_data.tournament_data);
 			state_data.menu_state = run_tournament;
 		}

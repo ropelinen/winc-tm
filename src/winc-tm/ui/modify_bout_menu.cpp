@@ -53,6 +53,25 @@ namespace winc
 				}
 			}
 
+			/* Finals */
+			if (!bt)
+			{
+				for (size_t pool_index = 0; pool_index < tournament.final_pool.size(); ++pool_index)
+				{
+					for (size_t bout_index = 0; bout_index < tournament.final_pool[pool_index].bouts.size(); ++bout_index)
+					{
+						if (tournament.final_pool[pool_index].bouts[bout_index].id == state_data.bout_to_modify)
+						{
+							bt = &tournament.final_pool[pool_index].bouts[bout_index];
+							break;
+						}
+					}
+
+					if (bt)
+						break;
+				}
+			}
+
 			if (!bt)
 				return;
 

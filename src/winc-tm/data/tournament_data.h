@@ -17,6 +17,7 @@ namespace winc
 		std::vector<fencer> fencers;
 		std::vector<pool> pools;
 		std::vector<pool> elimination_pools;
-		pool final_pool;
+		/* This is a vactor simply so that I don't have to change some gui code (yes, I'm in a hurry) */
+		std::vector<pool> final_pool;
 	};
 }

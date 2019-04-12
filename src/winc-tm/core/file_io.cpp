@@ -31,6 +31,7 @@ namespace winc
 	const char pools_element_name[] = "Pools";
 	const char pool_element_name[] = "Pool";
 	const char elimination_pool_element_name[] = "ElimPool";
+	const char final_pool_element_name[] = "FinalPool";
 	const char bout_element_name[] = "Bout";
 	const char bout_id_element_name[] = "Id";
 	const char blue_fencer_element_name[] = "BlueFencer";
@@ -352,6 +353,10 @@ namespace winc
 			for (size_t i = 0; i < data.elimination_pools.size(); ++i)
 				write_pool_data(data.elimination_pools[i], pools_doc, main_element, elimination_pool_element_name, i);
 
+			/* Final pool */
+			for (size_t i = 0; i < data.final_pool.size(); ++i)
+				write_pool_data(data.final_pool[i], pools_doc, main_element, final_pool_element_name, i);
+
 			tinyxml2::XMLError ret = pools_doc.SaveFile(pools_file);
 			if (ret != tinyxml2::XML_SUCCESS)
 				return false;
@@ -457,6 +462,7 @@ namespace winc
 				return false;
 
 			read_pool_elements(data.elimination_pools, main_element, elimination_pool_element_name);
+			read_pool_elements(data.final_pool, main_element, final_pool_element_name);
 		}
 		
 		return true;
