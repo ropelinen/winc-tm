@@ -9,17 +9,80 @@
 
 namespace winc
 {
-
-	void create_elimination_pools(state &state_data)
+	namespace
 	{
-		uint16_t advancing_fencer_count = uint16_t(state_data.tournament_data->elimination_pool_count * state_data.tournament_data->max_fencers_in_pool);
-		uint16_t pool_count = state_data.tournament_data->elimination_pool_count;
+		void create_elimination_pools(state &state_data)
+		{
+			uint16_t advancing_fencer_count = uint16_t(state_data.tournament_data->elimination_pool_count * state_data.tournament_data->max_fencers_in_pool);
+			uint16_t pool_count = state_data.tournament_data->elimination_pool_count;
 
-		state_data.tournament_data->elimination_pools.clear();
-		state_data.tournament_data->elimination_pools.resize(pool_count);
+			state_data.tournament_data->elimination_pools.clear();
+			state_data.tournament_data->elimination_pools.resize(pool_count);
 
-		for (size_t fencer_index = 0; fencer_index < advancing_fencer_count; ++fencer_index)
-			state_data.tournament_data->elimination_pools[fencer_index % pool_count].fencers.push_back(state_data.pool_results[fencer_index].id);
+			for (size_t fencer_index = 0; fencer_index < advancing_fencer_count; ++fencer_index)
+				state_data.tournament_data->elimination_pools[fencer_index % pool_count].fencers.push_back(state_data.pool_results[fencer_index].id);
+		}
+
+		void handle_create_bouts_for_pools(tournament_data & data)
+		{
+			uint16_t bout_id = 0;
+			const uint16_t invalid_fencer_id = 0xFFFF;
+			for (size_t pool_index = 0; pool_index < data.elimination_pools.size(); ++pool_index)
+			{
+				pool &pl = data.elimination_pools[pool_index];
+				pl.bouts.clear();
+				bool uneven_fencer_count = pl.fencers.size() % 2 != 0;
+				size_t fencer_count = pl.fencers.size();
+				if (uneven_fencer_count)
+					++fencer_count;
+
+				uint16_t *fencers = new uint16_t[fencer_count];
+
+				if (uneven_fencer_count)
+					fencers[fencer_count - 1] = invalid_fencer_id;
+
+				for (size_t fencer_index = 0; fencer_index < pl.fencers.size(); ++fencer_index)
+					fencers[fencer_index] = pl.fencers[fencer_index];
+
+				for (size_t round = 0; round < fencer_count - 1; ++round)
+				{
+					for (size_t bout_index = 0; bout_index < fencer_count / 2; ++bout_index)
+					{
+						uint16_t fencer_a = fencers[bout_index];
+						uint16_t fencer_b = fencers[fencer_count - 1 - bout_index];
+						if (fencer_a == invalid_fencer_id || fencer_b == invalid_fencer_id)
+							continue;
+
+						bout bt;
+						bt.id = bout_id;
+						if (fencer_a < fencer_b)
+						{
+							bt.blue_fencer = fencer_a;
+							bt.red_fencer = fencer_b;
+						}
+						else
+						{
+							bt.blue_fencer = fencer_b;
+							bt.red_fencer = fencer_a;
+						}
+
+						pl.bouts.push_back(bt);
+						++bout_id;
+					}
+
+					/* Advance the fencers */
+					uint16_t last_fencer_id = fencers[fencer_count - 1];
+					for (size_t move_index = fencer_count - 1; move_index > 1; --move_index)
+						fencers[move_index] = fencers[move_index - 1];
+
+					fencers[1] = last_fencer_id;
+				}
+
+				delete[] fencers;
+			}
+
+			write_tournament_data(data);
+		}
 	}
 
 	void handle_total_pool_results(state &state_data)
@@ -89,44 +152,10 @@ namespace winc
 		ImGui::SameLine();
 
 		if (ImGui::Button("Create elimination pools"))
+		{
 			create_elimination_pools(state_data);
-	}
-
-	void handle_elimination_pools(state &state_data)
-	{
-		std::vector<fencer> &fencers = state_data.tournament_data->fencers;
-		for (size_t pool_index = 0; pool_index < state_data.tournament_data->elimination_pools.size(); ++pool_index)
-		{
-			/* This is ugly but I'd say we are safe with 9999 pools */
-			char pool_num_str[4];
-			sprintf(pool_num_str, "%u", (uint32_t)pool_index + 1);
-			char pool_name[10] = "Pool ";
-			strcat(pool_name, pool_num_str);
-			if (ImGui::CollapsingHeader(pool_name))
-			{
-				std::vector<uint16_t> &pool = state_data.tournament_data->elimination_pools[pool_index].fencers;
-				for (size_t pool_member_index = 0; pool_member_index < pool.size(); ++pool_member_index)
-				{
-					for (size_t fencer_index = 0; fencer_index < fencers.size(); ++fencer_index)
-					{
-						if (pool[pool_member_index] != fencers[fencer_index].id)
-							continue;
-
-						if (ImGui::TreeNode((void *)(intptr_t)pool_member_index, "%s, %s (%u)", fencers[fencer_index].name, fencers[fencer_index].club, fencers[fencer_index].hema_rating))
-						{
-							ImGui::Text("Club: %s", fencers[fencer_index].club);
-							ImGui::Text("Rating: %u", fencers[fencer_index].hema_rating);
-
-							ImGui::TreePop();
-						}
-					}
-				}
-			}
-		}
-
-		if (ImGui::Button("Create bouts"))
-		{
-
+			handle_create_bouts_for_pools(*state_data.tournament_data);
+			state_data.menu_state = run_tournament;
 		}
 	}
 
@@ -145,10 +174,7 @@ namespace winc
 		/* We could actually have 'Tournament Name - State' as the window name */
 		ImGui::Begin(tournament.tournament_name, nullptr, window_flags);
 
-		if (tournament.elimination_pools.empty())
-			handle_total_pool_results(state_data);
-		else
-			handle_elimination_pools(state_data);
+		handle_total_pool_results(state_data);
 
 		ImGui::End();
 

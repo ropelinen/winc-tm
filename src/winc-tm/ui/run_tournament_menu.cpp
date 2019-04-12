@@ -21,15 +21,9 @@ namespace winc
 
 		tournament_state get_current_state(tournament_data &data)
 		{
-			for (size_t i = 0; i < data.elimination_pools.size(); ++i)
-			{
-				if (data.elimination_pools[i].bouts.empty())
-					continue;
-
+			if (!data.elimination_pools.empty())
 				return elims;
-				break;
-			}
-
+			
 			for (size_t i = 0; i < data.pools.size(); ++i)
 			{
 				if (data.pools[i].bouts.empty())
@@ -209,11 +203,27 @@ namespace winc
 			handle_create_bouts_for_pools(data);
 	}
 
-	void handle_main_window_pools_state(state &state_data)
+	void handle_main_window_pools_states(state &state_data, tournament_state tournament_state)
 	{
 		tournament_data &data = *state_data.tournament_data;
 		std::vector<fencer> &fencers = data.fencers;
-		for (size_t pool_index = 0; pool_index < data.pools.size(); ++pool_index)
+		std::vector<pool> *pools = nullptr;
+		switch (tournament_state)
+		{
+		case setup:
+			break;
+		case tournament_state::pools:
+			pools = &data.pools;
+			break;
+		case elims:
+			pools = &data.elimination_pools;
+			break;
+		case finals:
+			/* Dump final pool to a vector for simplicitys sake */
+			break;
+		}
+
+		for (size_t pool_index = 0; pool_index < pools->size(); ++pool_index)
 		{
 			/* This is ugly but I'd say we are safe with 9999 pools */
 			char pool_num_str[4];
@@ -222,7 +232,7 @@ namespace winc
 			strcat(pool_name, pool_num_str);
 			if (ImGui::CollapsingHeader(pool_name))
 			{
-				pool &pl = data.pools[pool_index];
+				pool &pl = (*pools)[pool_index];
 				bool all_matches_fought = true;
 				for (size_t bout_index = 0; bout_index < pl.bouts.size(); ++bout_index)
 				{
@@ -308,9 +318,9 @@ namespace winc
 
 		/* Check for pools done condition */
 		bool all_pools_done = true;
-		for (size_t pool_index = 0; pool_index < data.pools.size(); ++pool_index)
+		for (size_t pool_index = 0; pool_index < pools->size(); ++pool_index)
 		{
-			pool &pl = data.pools[pool_index];
+			pool &pl = (*pools)[pool_index];
 			for (size_t bout_index = 0; bout_index < pl.bouts.size(); ++bout_index)
 			{
 				if (pl.bouts[bout_index].exchanges.empty())
@@ -329,13 +339,24 @@ namespace winc
 			if (ImGui::Button("Finish pools"))
 			{
 				state_data.pool_results.clear();
-				for (size_t pool_index = 0; pool_index < data.pools.size(); ++pool_index)
+				for (size_t pool_index = 0; pool_index < pools->size(); ++pool_index)
 				{
-					pool &pl = data.pools[pool_index];
+					pool &pl = (*pools)[pool_index];
 					calculate_pool_results(pl, state_data.pool_results);
 				}
 				sort_pool_result(state_data.pool_results);
-				state_data.menu_state = pools_done;
+				switch (tournament_state)
+				{
+				case setup:
+					break;
+				case tournament_state::pools:
+					state_data.menu_state = pools_done;
+					break;
+				case elims:
+					break;
+				case finals:
+					break;
+				}
 			}
 		}
 	}
@@ -363,10 +384,11 @@ namespace winc
 			break;
 
 		case pools:
-			handle_main_window_pools_state(state_data);
+			handle_main_window_pools_states(state_data, current_state);
 			break;
 
 		case elims:
+			handle_main_window_pools_states(state_data, current_state);
 			break;
 
 		case finals:
