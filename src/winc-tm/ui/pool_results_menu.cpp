@@ -78,6 +78,11 @@ namespace winc
 		if (ImGui::Button("Back"))
 			state_data.menu_state = run_tournament;
 
+		ImGui::SameLine();
+
+		if (ImGui::Button("Write to file"))
+			write_pool_results_to_file(state_data);
+
 		ImGui::End();
 
 		char pool_window_title[] = "No bouts available";

@@ -315,7 +315,12 @@ namespace winc
 						sort_pool_result(state_data.pool_results);
 						state_data.menu_state = pool_results;
 					}
+
+					ImGui::SameLine();
 				}
+
+				if (ImGui::Button("Write pool to file"))
+					write_pool_to_file(state_data, (*pools)[pool_index], pool_index + 1);
 			}			
 		}
 

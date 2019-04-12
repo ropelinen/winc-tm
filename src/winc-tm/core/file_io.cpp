@@ -1,14 +1,24 @@
 #include "precompiled.h"
 
 #include "3rd_party/tinyxml2/tinyxml2.h"
+#include "data/pool.h"
+#include "data/state.h"
 #include "data/tournament_data.h"
 
+#pragma warning(push)
+#pragma warning(disable : 4774)
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#pragma warning(pop)
 #include <Windows.h>
 
 namespace winc
 {
 	const char file_path[] = "./files";
 	const char attribute_value_name[] = "val";
+	const char pool_fencers_file[] = "./files/pool_fencers.txt";
+	const char pool_results_file[] = "./files/pool_results.txt";
 
 	/* tournament.xml */
 	const char tournament_file[] = "./files/tournament.xml";
@@ -84,6 +94,97 @@ namespace winc
 				return;
 			}
 		}
+	}
+
+	void write_pool_to_file(state &state_data, pool &pl, size_t pool_index)
+	{
+		CreateDirectory(file_path, NULL);
+
+		if (!does_file_exist(pool_fencers_file))
+			create_file(pool_fencers_file);
+
+		std::ofstream file;
+		file.open(pool_fencers_file);
+		if (!file.is_open())
+			return;
+
+		file << "Pool ";
+		file << pool_index;
+		file << "\n";
+
+		for (size_t pool_member_index = 0; pool_member_index < pl.fencers.size(); ++pool_member_index)
+		{
+			uint16_t pool_member = pl.fencers[pool_member_index];
+			for (size_t fencer_index = 0; fencer_index < state_data.tournament_data->fencers.size(); ++fencer_index)
+			{
+				fencer &fenc = state_data.tournament_data->fencers[fencer_index];
+				if (pool_member != fenc.id)
+					continue;
+
+				file << pool_member_index + 1;
+				file << " ";
+				file << fenc.name;
+				file << " (";
+				file << fenc.club;
+				file << ")\n";
+				break;
+			}
+		}
+
+		file.close();
+	}
+
+	void write_pool_results_to_file(state &state_data)
+	{
+		CreateDirectory(file_path, NULL);
+
+		if (!does_file_exist(pool_results_file))
+			create_file(pool_results_file);
+
+		std::ofstream file;
+		file.open(pool_results_file);
+		if (!file.is_open())
+			return;
+
+		file << "Pool Results\n";
+		file << "# Name - Club - Match point index - Victory index - Q3 ratio - Clean ratio\n";
+		for (size_t result_index = 0; result_index < state_data.pool_results.size(); ++result_index)
+		{
+			fencer *fenc = nullptr;
+			fencer_results &result = state_data.pool_results[result_index];
+			for (size_t fencer_index = 0; fencer_index < state_data.tournament_data->fencers.size(); ++fencer_index)
+			{
+				if (result.id != state_data.tournament_data->fencers[fencer_index].id)
+					continue;
+
+				fenc = &state_data.tournament_data->fencers[fencer_index];
+				break;
+			}
+
+			if (!fenc)
+				continue;
+
+			file << result_index + 1;
+			file << " ";
+			file << fenc->name;
+
+			file << " - ";
+			file << fenc->club;
+
+			file << " - ";
+			file << std::fixed << std::setprecision(6) << get_fencer_matchpoint_index(result);
+
+			file << " - ";
+			file << std::fixed << std::setprecision(6) << get_fencer_victory_index(result);
+			
+			file << " - ";
+			file << std::fixed << std::setprecision(6) << get_fencer_q3_ratio(result);
+
+			file << " - ";
+			file << std::fixed << std::setprecision(6) << get_fencer_clean_ratio(result);
+			file << "\n";
+		}
+		file.close();
 	}
 
 	void write_pool_data(pool &pl, tinyxml2::XMLDocument &pools_doc, tinyxml2::XMLNode *main_element, const char *element_name, size_t index)
