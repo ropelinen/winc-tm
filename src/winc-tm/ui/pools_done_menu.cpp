@@ -155,6 +155,7 @@ namespace winc
 		{
 			create_elimination_pools(state_data);
 			handle_create_bouts_for_pools(*state_data.tournament_data);
+			write_tournament_data(*state_data.tournament_data);
 			state_data.menu_state = run_tournament;
 		}
 	}

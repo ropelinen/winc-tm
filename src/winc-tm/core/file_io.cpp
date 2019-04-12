@@ -30,6 +30,7 @@ namespace winc
 	const char pools_file[] = "./files/pools.xml";
 	const char pools_element_name[] = "Pools";
 	const char pool_element_name[] = "Pool";
+	const char elimination_pool_element_name[] = "ElimPool";
 	const char bout_element_name[] = "Bout";
 	const char bout_id_element_name[] = "Id";
 	const char blue_fencer_element_name[] = "BlueFencer";
@@ -82,6 +83,194 @@ namespace winc
 				return;
 			}
 		}
+	}
+
+	void write_pool_data(pool &pl, tinyxml2::XMLDocument &pools_doc, tinyxml2::XMLNode *main_element, const char *element_name, size_t index)
+	{
+		tinyxml2::XMLElement *pool_element = pools_doc.NewElement(element_name);
+		pool_element->SetAttribute(attribute_value_name, (int)index);
+		main_element->InsertEndChild(pool_element);
+
+		/* Fencers */
+		for (size_t fencer_index = 0; fencer_index < pl.fencers.size(); ++fencer_index)
+		{
+			tinyxml2::XMLElement *fencer_element = pools_doc.NewElement(fencer_element_name);
+			fencer_element->SetAttribute(attribute_value_name, pl.fencers[fencer_index]);
+			pool_element->InsertEndChild(fencer_element);
+		}
+
+		/* Bouts */
+		for (size_t bout_index = 0; bout_index < pl.bouts.size(); ++bout_index)
+		{
+			bout &bt = pl.bouts[bout_index];
+			tinyxml2::XMLElement *bout_element = pools_doc.NewElement(bout_element_name);
+			pool_element->InsertEndChild(bout_element);
+
+			tinyxml2::XMLElement *bout_id_element = pools_doc.NewElement(bout_id_element_name);
+			bout_id_element->SetAttribute(attribute_value_name, bt.id);
+			bout_element->InsertEndChild(bout_id_element);
+
+			tinyxml2::XMLElement *blue_fencer_element = pools_doc.NewElement(blue_fencer_element_name);
+			blue_fencer_element->SetAttribute(attribute_value_name, bt.blue_fencer);
+			bout_element->InsertEndChild(blue_fencer_element);
+
+			tinyxml2::XMLElement *red_fencer_element = pools_doc.NewElement(red_fencer_element_name);
+			red_fencer_element->SetAttribute(attribute_value_name, bt.red_fencer);
+			bout_element->InsertEndChild(red_fencer_element);
+
+			/* Exchanges */
+			for (size_t exchange_index = 0; exchange_index < bt.exchanges.size(); ++exchange_index)
+			{
+				exchange &exc = bt.exchanges[exchange_index];
+				tinyxml2::XMLElement *exchange_element = pools_doc.NewElement(exchange_element_name);
+				bout_element->InsertEndChild(exchange_element);
+
+				tinyxml2::XMLElement *exchange_blue_hit_element = pools_doc.NewElement(blue_hit_element_name);
+				exchange_blue_hit_element->SetAttribute(attribute_value_name, exc.hit_blue);
+				exchange_element->InsertEndChild(exchange_blue_hit_element);
+
+				tinyxml2::XMLElement *exchange_red_hit_element = pools_doc.NewElement(red_hit_element_name);
+				exchange_red_hit_element->SetAttribute(attribute_value_name, exc.hit_red);
+				exchange_element->InsertEndChild(exchange_red_hit_element);
+
+				tinyxml2::XMLElement *exchange_double_element = pools_doc.NewElement(double_element_name);
+				exchange_double_element->SetAttribute(attribute_value_name, exc.dbl);
+				exchange_element->InsertEndChild(exchange_double_element);
+
+				tinyxml2::XMLElement *exchange_warning_blue_element = pools_doc.NewElement(warning_blue_element_name);
+				exchange_warning_blue_element->SetAttribute(attribute_value_name, exc.warning_blue);
+				exchange_warning_blue_element->InsertEndChild(pools_doc.NewText(exc.warning_blue_reason));
+				exchange_element->InsertEndChild(exchange_warning_blue_element);
+
+				tinyxml2::XMLElement *exchange_warning_red_element = pools_doc.NewElement(warning_red_element_name);
+				exchange_warning_red_element->SetAttribute(attribute_value_name, exc.warning_red);
+				exchange_warning_red_element->InsertEndChild(pools_doc.NewText(exc.warning_red_reason));
+				exchange_element->InsertEndChild(exchange_warning_red_element);
+			}
+		}
+	}
+
+	bool read_pool_elements(std::vector<pool> &pools, tinyxml2::XMLNode *main_element, const char *element_name)
+	{
+		tinyxml2::XMLElement *pool_element = main_element->FirstChildElement(element_name);
+		if (!pool_element)
+			return false;
+
+		while (pool_element)
+		{
+			pool pl;
+
+			/* Fencers */
+			tinyxml2::XMLElement *fencer_element = pool_element->FirstChildElement(fencer_element_name);
+			if (!fencer_element)
+			{
+				pool_element = pool_element->NextSiblingElement(element_name);
+				continue;
+			}
+
+			while (fencer_element)
+			{
+				pl.fencers.push_back((uint16_t)fencer_element->IntAttribute(attribute_value_name));
+				fencer_element = fencer_element->NextSiblingElement(fencer_element_name);
+			}
+
+			/* Bouts */
+			tinyxml2::XMLElement *bout_element = pool_element->FirstChildElement(bout_element_name);
+			while (bout_element)
+			{
+				bout bt;
+				tinyxml2::XMLElement *bout_id_element = bout_element->FirstChildElement(bout_id_element_name);
+				if (!bout_id_element)
+				{
+					bout_element = bout_element->NextSiblingElement(bout_element_name);
+					continue;
+				}
+				bt.id = (uint16_t)bout_id_element->IntAttribute(attribute_value_name);
+
+				tinyxml2::XMLElement *blue_fencer_element = bout_element->FirstChildElement(blue_fencer_element_name);
+				if (!blue_fencer_element)
+				{
+					bout_element = bout_element->NextSiblingElement(bout_element_name);
+					continue;
+				}
+				bt.blue_fencer = (uint16_t)blue_fencer_element->IntAttribute(attribute_value_name);
+
+				tinyxml2::XMLElement *red_fencer_element = bout_element->FirstChildElement(red_fencer_element_name);
+				if (!red_fencer_element)
+				{
+					bout_element = bout_element->NextSiblingElement(bout_element_name);
+					continue;
+				}
+				bt.red_fencer = (uint16_t)red_fencer_element->IntAttribute(attribute_value_name);
+
+				/* Exchanges */
+				tinyxml2::XMLElement *exchange_element = bout_element->FirstChildElement(exchange_element_name);
+				while (exchange_element)
+				{
+					exchange exc;
+					tinyxml2::XMLElement *exchange_blue_hit_element = exchange_element->FirstChildElement(blue_hit_element_name);
+					if (!exchange_blue_hit_element)
+					{
+						exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
+						continue;
+					}
+					exc.hit_blue = (hit_quality)exchange_blue_hit_element->IntAttribute(attribute_value_name);
+
+					tinyxml2::XMLElement *exchange_red_hit_element = exchange_element->FirstChildElement(red_hit_element_name);
+					if (!exchange_red_hit_element)
+					{
+						exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
+						continue;
+					}
+					exc.hit_red = (hit_quality)exchange_red_hit_element->IntAttribute(attribute_value_name);
+
+					tinyxml2::XMLElement *exchange_double_element = exchange_element->FirstChildElement(double_element_name);
+					if (!exchange_double_element)
+					{
+						exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
+						continue;
+					}
+					exc.dbl = (double_hit)exchange_double_element->IntAttribute(attribute_value_name);
+
+					tinyxml2::XMLElement *exchange_warning_blue_element = exchange_element->FirstChildElement(warning_blue_element_name);
+					if (!exchange_warning_blue_element)
+					{
+						exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
+						continue;
+					}
+					exc.warning_blue = exchange_warning_blue_element->BoolAttribute(attribute_value_name);
+					if (exchange_warning_blue_element->GetText())
+						memcpy(exc.warning_blue_reason, exchange_warning_blue_element->GetText(), strlen(exchange_warning_blue_element->GetText()) + 1);
+					else
+						exc.warning_blue_reason[0] = '\0';
+
+					tinyxml2::XMLElement * exchange_warning_red_element = exchange_element->FirstChildElement(warning_red_element_name);
+					if (!exchange_warning_red_element)
+					{
+						exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
+						continue;
+					}
+					exc.warning_red = exchange_warning_red_element->BoolAttribute(attribute_value_name);
+					if (exchange_warning_red_element->GetText())
+						memcpy(exc.warning_red_reason, exchange_warning_red_element->GetText(), strlen(exchange_warning_red_element->GetText()) + 1);
+					else
+						exc.warning_red_reason[0] = '\0';
+
+					bt.exchanges.push_back(exc);
+					exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
+				}
+
+
+
+				pl.bouts.push_back(bt);
+				bout_element = bout_element->NextSiblingElement(bout_element_name);
+			}
+
+			pools.push_back(pl);
+			pool_element = pool_element->NextSiblingElement(element_name);
+		}
+
+		return true;
 	}
 
 	bool write_tournament_data(tournament_data &data)
@@ -155,71 +344,13 @@ namespace winc
 
 			tinyxml2::XMLNode *main_element = pools_doc.InsertEndChild(pools_doc.NewElement(pools_element_name));
 
+			/* Normal pools */
 			for (size_t i = 0; i < data.pools.size(); ++i)
-			{
-				pool &pl = data.pools[i];
-				tinyxml2::XMLElement *pool_element = pools_doc.NewElement(pool_element_name);
-				pool_element->SetAttribute(attribute_value_name, (int)i);
-				main_element->InsertEndChild(pool_element);
+				write_pool_data(data.pools[i], pools_doc, main_element, pool_element_name, i);
 
-				/* Fencers */
-				for (size_t fencer_index = 0; fencer_index < pl.fencers.size(); ++fencer_index)
-				{
-					tinyxml2::XMLElement *fencer_element = pools_doc.NewElement(fencer_element_name);
-					fencer_element->SetAttribute(attribute_value_name, pl.fencers[fencer_index]);
-					pool_element->InsertEndChild(fencer_element);
-				}
-
-				/* Bouts */
-				for (size_t bout_index = 0; bout_index < pl.bouts.size(); ++bout_index)
-				{
-					bout &bt = pl.bouts[bout_index];
-					tinyxml2::XMLElement *bout_element = pools_doc.NewElement(bout_element_name);
-					pool_element->InsertEndChild(bout_element);
-
-					tinyxml2::XMLElement *bout_id_element = pools_doc.NewElement(bout_id_element_name);
-					bout_id_element->SetAttribute(attribute_value_name, bt.id);
-					bout_element->InsertEndChild(bout_id_element);
-
-					tinyxml2::XMLElement *blue_fencer_element = pools_doc.NewElement(blue_fencer_element_name);
-					blue_fencer_element->SetAttribute(attribute_value_name, bt.blue_fencer);
-					bout_element->InsertEndChild(blue_fencer_element);
-
-					tinyxml2::XMLElement *red_fencer_element = pools_doc.NewElement(red_fencer_element_name);
-					red_fencer_element->SetAttribute(attribute_value_name, bt.red_fencer);
-					bout_element->InsertEndChild(red_fencer_element);
-
-					/* Exchanges */
-					for (size_t exchange_index = 0; exchange_index < bt.exchanges.size(); ++exchange_index)
-					{
-						exchange &exc = bt.exchanges[exchange_index];
-						tinyxml2::XMLElement *exchange_element = pools_doc.NewElement(exchange_element_name);
-						bout_element->InsertEndChild(exchange_element);
-
-						tinyxml2::XMLElement *exchange_blue_hit_element = pools_doc.NewElement(blue_hit_element_name);
-						exchange_blue_hit_element->SetAttribute(attribute_value_name, exc.hit_blue);
-						exchange_element->InsertEndChild(exchange_blue_hit_element);
-
-						tinyxml2::XMLElement *exchange_red_hit_element = pools_doc.NewElement(red_hit_element_name);
-						exchange_red_hit_element->SetAttribute(attribute_value_name, exc.hit_red);
-						exchange_element->InsertEndChild(exchange_red_hit_element);
-
-						tinyxml2::XMLElement *exchange_double_element = pools_doc.NewElement(double_element_name);
-						exchange_double_element->SetAttribute(attribute_value_name, exc.dbl);
-						exchange_element->InsertEndChild(exchange_double_element);
-
-						tinyxml2::XMLElement *exchange_warning_blue_element = pools_doc.NewElement(warning_blue_element_name);
-						exchange_warning_blue_element->SetAttribute(attribute_value_name, exc.warning_blue);
-						exchange_warning_blue_element->InsertEndChild(pools_doc.NewText(exc.warning_blue_reason));
-						exchange_element->InsertEndChild(exchange_warning_blue_element);
-
-						tinyxml2::XMLElement *exchange_warning_red_element = pools_doc.NewElement(warning_red_element_name);
-						exchange_warning_red_element->SetAttribute(attribute_value_name, exc.warning_red);
-						exchange_warning_red_element->InsertEndChild(pools_doc.NewText(exc.warning_red_reason));
-						exchange_element->InsertEndChild(exchange_warning_red_element);
-					}
-				}
-			}
+			/* Elimination pools */
+			for (size_t i = 0; i < data.elimination_pools.size(); ++i)
+				write_pool_data(data.elimination_pools[i], pools_doc, main_element, elimination_pool_element_name, i);
 
 			tinyxml2::XMLError ret = pools_doc.SaveFile(pools_file);
 			if (ret != tinyxml2::XML_SUCCESS)
@@ -322,123 +453,10 @@ namespace winc
 			if (!main_element)
 				return false;
 
-			tinyxml2::XMLElement *pool_element = main_element->FirstChildElement(pool_element_name);
-			if (!pool_element)
+			if (!read_pool_elements(data.pools, main_element, pool_element_name))
 				return false;
 
-			while (pool_element)
-			{
-				pool pl;
-
-				/* Fencers */
-				tinyxml2::XMLElement *fencer_element = pool_element->FirstChildElement(fencer_element_name);
-				if (!fencer_element)
-				{
-					pool_element = pool_element->NextSiblingElement(pool_element_name);
-					continue;
-				}
-
-				while (fencer_element)
-				{
-					pl.fencers.push_back((uint16_t)fencer_element->IntAttribute(attribute_value_name));
-					fencer_element = fencer_element->NextSiblingElement(fencer_element_name);
-				}
-
-				/* Bouts */
-				tinyxml2::XMLElement *bout_element = pool_element->FirstChildElement(bout_element_name);
-				while (bout_element)
-				{		
-					bout bt;
-					tinyxml2::XMLElement *bout_id_element = bout_element->FirstChildElement(bout_id_element_name);
-					if (!bout_id_element)
-					{
-						bout_element = bout_element->NextSiblingElement(bout_element_name);
-						continue;
-					}
-					bt.id = (uint16_t)bout_id_element->IntAttribute(attribute_value_name);
-					
-					tinyxml2::XMLElement *blue_fencer_element = bout_element->FirstChildElement(blue_fencer_element_name);
-					if (!blue_fencer_element)
-					{
-						bout_element = bout_element->NextSiblingElement(bout_element_name);
-						continue;
-					}
-					bt.blue_fencer = (uint16_t)blue_fencer_element->IntAttribute(attribute_value_name);
-
-					tinyxml2::XMLElement *red_fencer_element = bout_element->FirstChildElement(red_fencer_element_name);
-					if (!red_fencer_element)
-					{
-						bout_element = bout_element->NextSiblingElement(bout_element_name);
-						continue;
-					}
-					bt.red_fencer = (uint16_t)red_fencer_element->IntAttribute(attribute_value_name);
-					
-					/* Exchanges */
-					tinyxml2::XMLElement *exchange_element = bout_element->FirstChildElement(exchange_element_name);
-					while (exchange_element)
-					{
-						exchange exc;
-						tinyxml2::XMLElement *exchange_blue_hit_element = exchange_element->FirstChildElement(blue_hit_element_name);
-						if (!exchange_blue_hit_element)
-						{
-							exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
-							continue;
-						}
-						exc.hit_blue = (hit_quality)exchange_blue_hit_element->IntAttribute(attribute_value_name);
-
-						tinyxml2::XMLElement *exchange_red_hit_element = exchange_element->FirstChildElement(red_hit_element_name);
-						if (!exchange_red_hit_element)
-						{
-							exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
-							continue;
-						}
-						exc.hit_red = (hit_quality)exchange_red_hit_element->IntAttribute(attribute_value_name);
-	
-						tinyxml2::XMLElement *exchange_double_element = exchange_element->FirstChildElement(double_element_name);
-						if (!exchange_double_element)
-						{
-							exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
-							continue;
-						}
-						exc.dbl = (double_hit)exchange_double_element->IntAttribute(attribute_value_name);
-
-						tinyxml2::XMLElement *exchange_warning_blue_element = exchange_element->FirstChildElement(warning_blue_element_name);
-						if (!exchange_warning_blue_element)
-						{
-							exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
-							continue;
-						}
-						exc.warning_blue = exchange_warning_blue_element->BoolAttribute(attribute_value_name);
-						if (exchange_warning_blue_element->GetText())
-							memcpy(exc.warning_blue_reason, exchange_warning_blue_element->GetText(), strlen(exchange_warning_blue_element->GetText()) + 1);
-						else
-							exc.warning_blue_reason[0] = '\0';
-
-						tinyxml2::XMLElement *exchange_warning_red_element = exchange_element->FirstChildElement(warning_red_element_name);
-						if (!exchange_warning_red_element)
-						{
-							exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
-							continue;
-						}
-						exc.warning_red = exchange_warning_red_element->BoolAttribute(attribute_value_name);
-						if (exchange_warning_red_element->GetText())
-							memcpy(exc.warning_red_reason, exchange_warning_red_element->GetText(), strlen(exchange_warning_red_element->GetText()) + 1);
-						else
-							exc.warning_red_reason[0] = '\0';
-
-						bt.exchanges.push_back(exc);
-						exchange_element = exchange_element->NextSiblingElement(exchange_element_name);
-					}
-
-					
-
-					pl.bouts.push_back(bt);
-					bout_element = bout_element->NextSiblingElement(bout_element_name);
-				}
-
-				data.pools.push_back(pl);
-				pool_element = pool_element->NextSiblingElement(pool_element_name);
-			}
+			read_pool_elements(data.elimination_pools, main_element, elimination_pool_element_name);
 		}
 		
 		return true;
