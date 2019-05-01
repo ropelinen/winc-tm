@@ -19,6 +19,7 @@ namespace winc
 	const char attribute_value_name[] = "val";
 	const char pool_fencers_file[] = "./files/pool_fencers.txt";
 	const char pool_results_file[] = "./files/pool_results.txt";
+	const char tournament_results_file[] = "./files/tournament_results.txt";
 
 	/* tournament.xml */
 	const char tournament_file[] = "./files/tournament.xml";
@@ -184,6 +185,130 @@ namespace winc
 			file << std::fixed << std::setprecision(6) << get_fencer_clean_ratio(result);
 			file << "\n";
 		}
+		file.close();
+	}
+
+	void write_single_pool_results_to_file(std::ofstream &file, tournament_data &tournament, pool &pl)
+	{
+		for (size_t bout_index = 0; bout_index < pl.bouts.size(); ++bout_index)
+		{
+			bout &bt = pl.bouts[bout_index];
+
+			char *name_blue = nullptr;
+			char *name_red = nullptr;
+			for (size_t fencer_index = 0; fencer_index < tournament.fencers.size(); ++fencer_index)
+			{
+				fencer &fenc = tournament.fencers[fencer_index];
+				if (fenc.id == bt.blue_fencer)
+					name_blue = fenc.name;
+				else if (fenc.id == bt.red_fencer)
+					name_red = fenc.name;
+
+				if (name_red && name_blue)
+					break;
+			}
+
+			if (!name_red || !name_blue)
+				continue;
+
+			uint16_t blue_q1, blue_q2, blue_q3;
+			uint16_t red_q1, red_q2, red_q3;
+			get_blue_fencer_score(bt, blue_q1, blue_q2, blue_q3);
+			get_red_fencer_score(bt, red_q1, red_q2, red_q3);
+
+			bool suicidal_double_loss = get_suicidal_double_count(bt) >= 3;
+			uint16_t warning_count_blue = get_blue_warning_count(bt);
+			if (warning_count_blue >= 2)
+			{
+				if (blue_q3 > 0)
+					--blue_q3;
+				else if (blue_q2 > 0)
+					--blue_q2;
+				else if (blue_q1 > 0)
+					--blue_q1;
+			}
+
+			uint16_t warning_count_red = get_red_warning_count(bt);
+			if (warning_count_red >= 2)
+			{
+				if (red_q3 > 0)
+					--red_q3;
+				else if (red_q2 > 0)
+					--red_q2;
+				else if (red_q1 > 0)
+					--red_q1;
+			}
+
+			const char *result_string[] = { "INVALID", "WIN", "DRAW", "LOSS" };
+			bout_result bout_result_blue;
+			bout_result bout_result_red;
+			get_bout_results(bt, bout_result_blue, bout_result_red);
+
+			if (suicidal_double_loss)
+				file << "DOUBLE LOSS: ";
+
+			file << "Q1(" << blue_q1 << ") Q2(" << blue_q2 << ") Q3(" << blue_q3 << ") " << result_string[bout_result_blue] << (warning_count_blue >= 4 ? "(warning loss) " : " ") << name_blue;
+			file << " - ";
+			file << name_red << " " << result_string[bout_result_red] << (warning_count_red >= 4 ? "(warning loss) " : " ") << " Q1(" << blue_q1 << ") Q2(" << blue_q2 << ") Q3(" << blue_q3 << ")";
+			file << "\n";
+		}
+	}
+
+	void write_tournament_results_to_file(state &state_data)
+	{
+		if (!state_data.tournament_data)
+			return;
+
+		CreateDirectory(file_path, NULL);
+
+		if (!does_file_exist(tournament_results_file))
+			create_file(tournament_results_file);
+
+		std::ofstream file;
+		file.open(tournament_results_file);
+		if (!file.is_open())
+			return;
+
+		tournament_data &tournament = *state_data.tournament_data;
+		file << "TOURNAMENT RESULTS\n\n";
+
+		file << "POOLS\n";
+		for (size_t pool_index = 0; pool_index < tournament.pools.size(); ++pool_index)
+		{
+			file << "Pool ";
+			file << pool_index + 1;
+			file << "\n";
+
+			pool &pl = tournament.pools[pool_index];
+			write_single_pool_results_to_file(file, tournament, pl);
+
+			file << "\n";
+		}
+
+		file << "ELIMINATION POOLS\n";
+		for (size_t pool_index = 0; pool_index < tournament.elimination_pools.size(); ++pool_index)
+		{
+			file << "Elimination Pool ";
+			file << pool_index + 1;
+			file << "\n";
+
+			pool &pl = tournament.elimination_pools[pool_index];
+			write_single_pool_results_to_file(file, tournament, pl);
+
+			file << "\n";
+		}
+
+		file << "FINALS\n";
+		for (size_t pool_index = 0; pool_index < tournament.final_pool.size(); ++pool_index)
+		{
+			file << "Final Pool\n";
+
+			pool &pl = tournament.final_pool[pool_index];
+			write_single_pool_results_to_file(file, tournament, pl);
+
+			file << "\n";
+		}
+
 		file.close();
 	}
 
@@ -541,7 +666,10 @@ namespace winc
 				if (!club_element)
 					return false;
 
-				memcpy(fenc.club, club_element->GetText(), strlen(club_element->GetText()) + 1);
+				if (club_element->GetText() && strlen(club_element->GetText()) > 0)
+					memcpy(fenc.club, club_element->GetText(), strlen(club_element->GetText()) + 1);
+				else
+					fenc.club[0] = '\0';
 
 				data.fencers.push_back(fenc);
 				fencer_element = fencer_element->NextSiblingElement(fencer_element_name);

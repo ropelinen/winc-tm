@@ -5,3 +5,5 @@
 /.vs/
 /x64/
 /files/
+/ipch/
+/Release/

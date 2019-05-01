@@ -230,7 +230,12 @@ namespace winc
 		ImGui::SameLine();
 
 		if (!state_data.tournament_data->final_pool.empty())
+		{
+			if (ImGui::Button("Print tournament results"))
+				write_tournament_results_to_file(state_data);
+			
 			return;
+		}
 			
 		if (ImGui::Button("Create new pools"))
 		{
