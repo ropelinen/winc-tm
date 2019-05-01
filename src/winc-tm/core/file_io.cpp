@@ -249,7 +249,7 @@ namespace winc
 
 			file << "Q1(" << blue_q1 << ") Q2(" << blue_q2 << ") Q3(" << blue_q3 << ") " << result_string[bout_result_blue] << (warning_count_blue >= 4 ? "(warning loss) " : " ") << name_blue;
 			file << " - ";
-			file << name_red << " " << result_string[bout_result_red] << (warning_count_red >= 4 ? "(warning loss) " : " ") << " Q1(" << blue_q1 << ") Q2(" << blue_q2 << ") Q3(" << blue_q3 << ")";
+			file << name_red << " " << result_string[bout_result_red] << (warning_count_red >= 4 ? "(warning loss) " : " ") << " Q1(" << red_q1 << ") Q2(" << red_q2 << ") Q3(" << red_q3 << ")";
 			file << "\n";
 		}
 	}
